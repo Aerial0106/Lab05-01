@@ -9,6 +9,7 @@ using System.Runtime.Remoting.Contexts;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Forms.VisualStyles;
 using BLL;
 using DAL.Entities;
 
@@ -54,6 +55,14 @@ namespace GUI
             }
         }
 
+        private void FillFaculty()
+        {
+            List<Faculty> listFaclty = facultyBLL.GetAll();
+            cmbFaculty.DataSource = listFaclty;
+            cmbFaculty.ValueMember = "FacultyID";
+            cmbFaculty.DisplayMember = "FacultyName";
+        }
+
         private void Form1_Load(object sender, EventArgs e)
         {
             StudentContextDB contextDB = new StudentContextDB();
@@ -64,11 +73,7 @@ namespace GUI
                 var listStudents = studentBLL.GetAll();
                 BindGrid(listStudents);
 
-                foreach (var item in faculties)
-                {
-                    cmbFaculty.Items.Add(item.FacultyName);
-                }
-                cmbFaculty.SelectedItem = "Công nghệ thông tin";
+                FillFaculty();
             }
             catch (Exception ex)
             {
@@ -90,7 +95,7 @@ namespace GUI
             StudentContextDB ContextDB = new StudentContextDB();
             List<Student> listStudent = ContextDB.Student.ToList();
 
-            DialogResult dl = MessageBox.Show("Bạn có muốn xóa sinh viên", "thông báo", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            DialogResult dl = MessageBox.Show("Bạn có muốn xóa dữ liệu?", "thông báo", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (dl == DialogResult.Yes)
             {
                 Student dbDeltete = ContextDB.Student.FirstOrDefault(nv => nv.StudentID == txtStudentID.Text);
@@ -104,7 +109,7 @@ namespace GUI
                     txtStudentID.Text = "";
                     txtFullName.Text = "";
                     txtAvgScore.Text = "";
-                    MessageBox.Show("Xóa nhân viên thành công", "Thông báo", MessageBoxButtons.OK);
+                    MessageBox.Show("Xóa dữ liệu thành công", "Thông báo", MessageBoxButtons.OK);
                 }
             }
         }
@@ -116,20 +121,40 @@ namespace GUI
                 StudentContextDB ContextDB = new StudentContextDB();
                 if (txtStudentID.Text == "" || txtFullName.Text == "" || txtAvgScore.Text == "")
                 {
-                    throw new Exception("Hãy điền đủ thông tin !!!");
+                    throw new Exception("Hãy điền đủ thông tin!");
                 }
                 List<Student> listStudent = ContextDB.Student.ToList();
                 Student checkID = ContextDB.Student.FirstOrDefault(nv => nv.StudentID == txtStudentID.Text);
                 if (checkID != null)
                 {
-                    throw new Exception("Mã số nhân viên đã tồn tại!!!");
+                    throw new Exception("Mã số sinh viên đã tồn tại!");
                 }
 
                 string selectedFaculty = cmbFaculty.Text;
                 Faculty selectedFacultyObj = ContextDB.Faculty.FirstOrDefault(NV => NV.FacultyName == selectedFaculty);
                 int facultyID = selectedFacultyObj.FacultyID;
 
-                Student student = new Student() { StudentID = txtStudentID.Text, FullName = txtFullName.Text, FacultyID = facultyID, AvgScore = Double.Parse(txtAvgScore.Text) };
+                string fileName = null;
+                if (picAvatar.Image != null)
+                {
+                    string parentDirectory = Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).Parent.Parent.FullName;
+                    parentDirectory = Path.Combine(parentDirectory, "Images");
+                    DirectoryInfo dir = new DirectoryInfo(parentDirectory);
+                    if (!dir.Exists)
+                        dir.Create();
+                    fileName = txtStudentID.Text + ".jpg";
+                    string imagePath = Path.Combine(parentDirectory, fileName);
+                    picAvatar.Image.Save(imagePath);
+                }
+
+                Student student = new Student()
+                {
+                    StudentID = txtStudentID.Text,
+                    FullName = txtFullName.Text,
+                    FacultyID = facultyID,
+                    AvgScore = Double.Parse(txtAvgScore.Text),
+                    Avatar = (fileName != null) ? "" : fileName
+                };
                 ContextDB.Student.Add(student);
                 ContextDB.SaveChanges();
 
@@ -139,7 +164,7 @@ namespace GUI
                 txtStudentID.Text = "";
                 txtFullName.Text = "";
                 txtAvgScore.Text = "";
-                throw new Exception("Thêm nhân viên thành công !!!");
+                throw new Exception("Thêm dữ liệu thành công !");
             }
             catch (Exception ex)
             {
@@ -153,6 +178,7 @@ namespace GUI
             string selectedFaculty = cmbFaculty.Text;
             Faculty selectedFacultyObj = ContextDB.Faculty.FirstOrDefault(NV => NV.FacultyName == selectedFaculty);
             int facultyID = selectedFacultyObj.FacultyID;
+            
             try
             {
                 Student dbUpdate = ContextDB.Student.FirstOrDefault(nv => nv.StudentID == txtStudentID.Text);
@@ -161,11 +187,13 @@ namespace GUI
                     dbUpdate.FullName = txtFullName.Text;
                     dbUpdate.FacultyID = facultyID;
                     dbUpdate.AvgScore = Double.Parse(txtAvgScore.Text);
+                    
+                    
                     ContextDB.SaveChanges();
                     List<Student> listnewStudent = ContextDB.Student.ToList();
                     dgvStudent.DataSource = null;
                     BindGrid(listnewStudent);
-                    throw new Exception("Cập nhật thành công !!!");
+                    throw new Exception("Cập nhật dữ liệu thành công!");
                 }
             }
             catch (Exception ex)
@@ -176,11 +204,37 @@ namespace GUI
 
         private void dgvStudent_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            int i = dgvStudent.CurrentRow.Index;
-            txtStudentID.Text = dgvStudent.Rows[i].Cells[0].Value.ToString();
-            txtFullName.Text = dgvStudent.Rows[i].Cells[1].Value.ToString();
-            cmbFaculty.Text = dgvStudent.Rows[i].Cells[2].Value.ToString();
-            txtAvgScore.Text = dgvStudent.Rows[i].Cells[3].Value.ToString();
+            int i = dgvStudent.SelectedCells[0].RowIndex;
+            if (dgvStudent.Rows[i].Cells[0].Value != null)
+            {
+                string studentID = dgvStudent.Rows[i].Cells[0].Value.ToString();
+                Student student = studentBLL.FindByID(studentID);
+                txtStudentID.Text = student.StudentID;
+                txtFullName.Text = student.FullName;
+                cmbFaculty.SelectedValue = student.FacultyID;
+                txtAvgScore.Text = student.AvgScore.ToString();
+                if (student.Avatar == null)
+                {
+                    picAvatar.Image = null;
+                }
+                else
+                {
+                    string parentDirectory = Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).Parent.Parent.FullName;
+                    string imagePath = Path.Combine(parentDirectory, "Images", student.Avatar);
+                    picAvatar.Image = Image.FromFile(imagePath);
+                    picAvatar.Refresh();
+                }
+            }
+        }
+
+        private void uploadAvatarToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "JPEG Files | *.jpg";
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                picAvatar.Image = Image.FromFile(openFileDialog.FileName);
+            }    
         }
     }
 }

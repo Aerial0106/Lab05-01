@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.btnUpdate = new System.Windows.Forms.Button();
             this.picAvatar = new System.Windows.Forms.PictureBox();
             this.btnQuit = new System.Windows.Forms.Button();
             this.btnDelete = new System.Windows.Forms.Button();
@@ -49,10 +50,14 @@
             this.Faculty = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.AvgScore = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Major = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.btnUpdate = new System.Windows.Forms.Button();
+            this.chbUnregister = new System.Windows.Forms.CheckBox();
+            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.chứcNăngToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.uploadAvatarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picAvatar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvStudent)).BeginInit();
+            this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -78,11 +83,22 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Thông Tin Sinh Viên:";
             // 
+            // btnUpdate
+            // 
+            this.btnUpdate.Location = new System.Drawing.Point(101, 298);
+            this.btnUpdate.Name = "btnUpdate";
+            this.btnUpdate.Size = new System.Drawing.Size(75, 23);
+            this.btnUpdate.TabIndex = 5;
+            this.btnUpdate.Text = "Update";
+            this.btnUpdate.UseVisualStyleBackColor = true;
+            this.btnUpdate.Click += new System.EventHandler(this.btnUpdate_Click);
+            // 
             // picAvatar
             // 
             this.picAvatar.Location = new System.Drawing.Point(9, 159);
             this.picAvatar.Name = "picAvatar";
             this.picAvatar.Size = new System.Drawing.Size(256, 133);
+            this.picAvatar.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.picAvatar.TabIndex = 4;
             this.picAvatar.TabStop = false;
             // 
@@ -209,9 +225,9 @@
             this.Faculty,
             this.AvgScore,
             this.Major});
-            this.dgvStudent.Location = new System.Drawing.Point(289, 76);
+            this.dgvStudent.Location = new System.Drawing.Point(289, 103);
             this.dgvStudent.Name = "dgvStudent";
-            this.dgvStudent.Size = new System.Drawing.Size(594, 362);
+            this.dgvStudent.Size = new System.Drawing.Size(594, 335);
             this.dgvStudent.TabIndex = 2;
             this.dgvStudent.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvStudent_CellClick);
             // 
@@ -241,24 +257,53 @@
             this.Major.HeaderText = "Chuyên ngành";
             this.Major.Name = "Major";
             // 
-            // btnUpdate
+            // chbUnregister
             // 
-            this.btnUpdate.Location = new System.Drawing.Point(101, 298);
-            this.btnUpdate.Name = "btnUpdate";
-            this.btnUpdate.Size = new System.Drawing.Size(75, 23);
-            this.btnUpdate.TabIndex = 5;
-            this.btnUpdate.Text = "Update";
-            this.btnUpdate.UseVisualStyleBackColor = true;
-            this.btnUpdate.Click += new System.EventHandler(this.btnUpdate_Click);
+            this.chbUnregister.AutoSize = true;
+            this.chbUnregister.Location = new System.Drawing.Point(719, 76);
+            this.chbUnregister.Name = "chbUnregister";
+            this.chbUnregister.Size = new System.Drawing.Size(164, 17);
+            this.chbUnregister.TabIndex = 3;
+            this.chbUnregister.Text = "Chưa đăng ký chuyên ngành";
+            this.chbUnregister.UseVisualStyleBackColor = true;
+            // 
+            // menuStrip1
+            // 
+            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.chứcNăngToolStripMenuItem});
+            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
+            this.menuStrip1.Name = "menuStrip1";
+            this.menuStrip1.Size = new System.Drawing.Size(895, 24);
+            this.menuStrip1.TabIndex = 4;
+            this.menuStrip1.Text = "menuStrip1";
+            // 
+            // chứcNăngToolStripMenuItem
+            // 
+            this.chứcNăngToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.uploadAvatarToolStripMenuItem});
+            this.chứcNăngToolStripMenuItem.Name = "chứcNăngToolStripMenuItem";
+            this.chứcNăngToolStripMenuItem.Size = new System.Drawing.Size(77, 20);
+            this.chứcNăngToolStripMenuItem.Text = "Chức năng";
+            // 
+            // uploadAvatarToolStripMenuItem
+            // 
+            this.uploadAvatarToolStripMenuItem.Name = "uploadAvatarToolStripMenuItem";
+            this.uploadAvatarToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.P)));
+            this.uploadAvatarToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
+            this.uploadAvatarToolStripMenuItem.Text = "UploadAvatar";
+            this.uploadAvatarToolStripMenuItem.Click += new System.EventHandler(this.uploadAvatarToolStripMenuItem_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(895, 450);
+            this.Controls.Add(this.chbUnregister);
             this.Controls.Add(this.dgvStudent);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.groupBox1);
+            this.Controls.Add(this.menuStrip1);
+            this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.Form1_Load);
@@ -266,6 +311,8 @@
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picAvatar)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvStudent)).EndInit();
+            this.menuStrip1.ResumeLayout(false);
+            this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -295,6 +342,10 @@
         private System.Windows.Forms.Button btnInsert;
         private System.Windows.Forms.PictureBox picAvatar;
         private System.Windows.Forms.Button btnUpdate;
+        private System.Windows.Forms.CheckBox chbUnregister;
+        private System.Windows.Forms.MenuStrip menuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem chứcNăngToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem uploadAvatarToolStripMenuItem;
     }
 }
 
